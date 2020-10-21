@@ -19,7 +19,9 @@ struct date get_current_date() {
 
 int month_to_quarter(int m) {
     // quarters: q1: 1, 2, 3; q2: 4, 5, 6; q3: 7, 8, 9; q4: 10, 11, 12
-    if (m > 0 && m <= 3) {
+    if (m <= 0) {
+        return -1;
+    } else if (m <= 3) {
         return 1;
     } else if (m <= 6) {
         return 2;

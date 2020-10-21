@@ -106,6 +106,7 @@ int count_last_good_comments_from_file(char *fpath) {
             &c.score_last);
         if (res == 0) {
             printf("Error: while reading %s\n", fpath);
+            free(buf);
             fclose(f);
             return -3;
         }
