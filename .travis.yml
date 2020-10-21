@@ -1,6 +1,6 @@
 language: c
 install: pip3 install cpplint
-script: make && make test
+script: make test
 cache: packages
 
 addons:

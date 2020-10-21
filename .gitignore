@@ -4,5 +4,6 @@
 *.gcda
 *.gcno
 
+*.txt
 *.out
 *.exe

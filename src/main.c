@@ -10,49 +10,58 @@ Copyright 2020 KoroLion (github.com/KoroLion)
 #include <stdlib.h>
 #include <time.h>
 #include <inttypes.h>
-#include <unistd.h>
 
-void random_data_string(char *s) {
-    int y = 2000 + rand() % 21;
+void random_data_string(char *s, int s_len, unsigned *rseed) {
+    int y = 2000 + rand_r(rseed) % 21;
 
     char m[3], d[3];
 
-    int v = rand() % 13;
+    int v = rand_r(rseed) % 13;
     m[1] = v % 10 + 48;
     v /= 10;
     m[0] = v % 10 + 48;
     m[2] = 0;
 
-    v = rand() % 29;
+    v = rand_r(rseed) % 29;
     d[1] = v % 10 + 48;
     v /= 10;
     d[0] = v % 10 + 48;
     d[2] = 0;
 
-    float scr_avg = rand() % 6;
-    int scr_amnt = rand() % 10000;
-    int scr_lst = rand() % 6;
+    float scr_avg = (rand_r(rseed) % 5001) / 1000.0;
+    if (scr_avg <= 1.0000) {
+        scr_avg = 0;
+    }
+    int scr_amnt = rand_r(rseed) % 10000;
+    int scr_lst = rand_r(rseed) % 6;
 
-    snprintf(s, sizeof(s) * 255, "%f %d %d-%s-%s %d",
-        scr_avg,
+    int c_wrtn = 0;
+    if (scr_avg <= 1.0000) {
+        c_wrtn = snprintf(s, s_len, "0 ");
+    } else {
+        c_wrtn = snprintf(s, s_len, "%0.2f ", scr_avg);
+    }
+
+    snprintf(s + c_wrtn, s_len - c_wrtn, "%d %d-%s-%s %d",
         scr_amnt,
         y, m, d,
         scr_lst);
 }
 
-int create_random_data_file(const char *fpath, int64_t amount) {
+int create_random_data_file(const char *fpath, int64_t amnt, unsigned *rseed) {
     FILE *f = fopen(fpath, "w");
     if (f == NULL) {
         return -1;
     }
 
-    for (int64_t i = 1; i <= amount; i++) {
-        char *s = malloc(255 * sizeof(s));
+    int s_len = 255;
+    char *s = malloc(s_len * sizeof(s));
+    for (int64_t i = 1; i <= amnt; i++) {
         s[0] = 0;
-        random_data_string(s);
+        random_data_string(s, s_len, rseed);
         fprintf(f, "%" PRId64 " %s\n", i, s);
-        free(s);
     }
+    free(s);
 
     fclose(f);
     return 0;
@@ -71,11 +80,14 @@ int count_gt_year_from_file(char *fpath, int year) {
     if (f == NULL) {
         return -1;
     }
-    char s[1024];
 
+    const int buf_len = 1024;
+    char *buf = malloc(buf_len * sizeof(buf));
     struct comment_data c;
-    while (fgets(s, 1024, f) != NULL) {
-        int res = sscanf(s, "%d %f %d %d-%d-%d %d\n",
+    int filtered_amount = 0;
+
+    while (fgets(buf, buf_len, f) != NULL) {
+        int res = sscanf(buf, "%d %f %d %d-%d-%d %d\n",
             &c.id, &c.score_avg,
             &c.score_amount,
             &c.ly, &c.lm,
@@ -87,21 +99,26 @@ int count_gt_year_from_file(char *fpath, int year) {
             return -3;
         }
 
-        if (c.ly > year) {
-            printf("%d %d\n", c.id, c.ly);
+        if (c.score_avg > 4.0000) {
+            printf("%s", buf);
+            filtered_amount++;
         }
     }
 
+    free(buf);
     fclose(f);
-    return 0;
+
+    return filtered_amount;
 }
 
 
 int main(int argc, char **argv) {
-    srand(time(0));
+    unsigned seed = time(0);
+    create_random_data_file("test_data.txt", 100, &seed);
 
-    create_random_data_file("test_data.txt", 100);
-    count_gt_year_from_file("test_data.txt", 2015);
+    int filtered_amount = count_gt_year_from_file("test_data.txt", 2015);
+    printf("There are %d comments which average score is more than 4.\n",
+        filtered_amount);
 
     return 0;
 }
