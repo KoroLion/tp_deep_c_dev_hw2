@@ -4,9 +4,6 @@ Copyright 2020 KoroLion (github.com/KoroLion)
 #ifndef SRC_INCLUDE_UTILS_H_
 #define SRC_INCLUDE_UTILS_H_
 
-#define debug_print(fmt, ...) \
-            do { if (DEBUG) { fprintf(stderr, fmt, __VA_ARGS__); } } while (0)
-
 struct date {
     int d, m, y;
 };

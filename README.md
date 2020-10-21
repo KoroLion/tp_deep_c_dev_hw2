@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/KoroLion/tp_deep_c_dev_hw2.svg?branch=master)](https://travis-ci.org/KoroLion/tp_deep_c_dev_hw2)
+
 Репозиторий с решением домашнего задания №2 от [park.mail.ru]() по курсу "Углубленное программирование на C/C++".
 
 ### Домашнее задание 2 (вариант 66)

@@ -17,7 +17,7 @@ int main(int argc, char **argv) {
         printf("Error: while reading data file!");
         return 1;
     }
-    // printf("Comments filtered: %d/%d\n", filtered_amount, TEST_DATA_AMOUNT);
+
     printf("There're %d comments from the last quarter with score > 4.\n",
         filtered_amount);
 

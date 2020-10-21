@@ -4,6 +4,7 @@ Copyright 2020 KoroLion (github.com/KoroLion)
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 #include <stdbool.h>
 #include <inttypes.h>
 
@@ -119,8 +120,6 @@ int count_last_good_comments_from_file(char *fpath) {
         }
         bool is_comment_in_current_q = last_q == upd_q && q_y == c.ly;
         if (is_comment_in_current_q && c.score_average > 4.0000) {
-            // todo: printf for debug, needs to be removed
-            printf("%s", buf);
             filtered_amount++;
         }
     }

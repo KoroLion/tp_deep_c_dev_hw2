@@ -4,6 +4,8 @@ Copyright 2020 KoroLion (github.com/KoroLion)
 #ifndef SRC_INCLUDE_COMMENT_DATA_H_
 #define SRC_INCLUDE_COMMENT_DATA_H_
 
+#include <stdint.h>
+
 struct comment_data {
     int id;
     float score_average;
