@@ -1,0 +1,12 @@
+language: c
+install: pip3 install cpplint
+script: make && make test
+cache: packages
+
+addons:
+  apt:
+    packages:
+      - valgrind
+      - check
+      - cppcheck
+      - python3-pip
