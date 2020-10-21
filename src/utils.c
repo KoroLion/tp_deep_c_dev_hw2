@@ -31,3 +31,12 @@ int month_to_quarter(int m) {
         return -1;
     }
 }
+
+void to_date_format(int v, char *s) {
+    // 1 <= v <= 99
+    // prepends zero if needed and converts to string
+    s[1] = v % 10 + 48;
+    v /= 10;
+    s[0] = v % 10 + 48;
+    s[2] = 0;
+}

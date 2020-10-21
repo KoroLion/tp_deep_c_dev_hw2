@@ -21,41 +21,34 @@ void random_data(struct comment_data *c, int rand_years, unsigned *rseed) {
     c->score_last = rand_r(rseed) % 5 + 1;
 }
 
-void to_date_format(int v, char *s) {
-    // 1 <= v <= 99
-    // prepends zero if needed and converts to string
-    s[1] = v % 10 + 48;
-    v /= 10;
-    s[0] = v % 10 + 48;
-    s[2] = 0;
-}
-
 int random_data_string(char *s, int s_len, unsigned *rseed) {
     struct comment_data c;
     random_data(&c, 2, rseed);
 
-    char *sm = malloc(3 * sizeof(sm));
-    char *sd = malloc(3 * sizeof(sd));
-    if (sm == NULL || sd == NULL) {
-        return -2;
-    }
-    to_date_format(c.lm, sm);
-    to_date_format(c.ld, sd);
-
-    int c_wrtn = 0;
     if (c.score_average <= 1.0000) {
-        c_wrtn = snprintf(s, s_len, "0 ");
+        snprintf(s, s_len, "0 0 00-00-0000 0");
     } else {
-        c_wrtn = snprintf(s, s_len, "%0.2f ", c.score_average);
+        char *sm = malloc(3 * sizeof(sm));
+        if (sm == NULL) {
+            return -2;
+        }
+        char *sd = malloc(3 * sizeof(sd));
+        if (sd == NULL) {
+            free(sm);
+            return -2;
+        }
+        to_date_format(c.lm, sm);
+        to_date_format(c.ld, sd);
+
+        snprintf(s, s_len, "%0.2f %d %d-%s-%s %d",
+            c.score_average,
+            c.score_amount,
+            c.ly, sm, sd,
+            c.score_last);
+
+        free(sm);
+        free(sd);
     }
-
-    snprintf(s + c_wrtn, s_len - c_wrtn, "%d %d-%s-%s %d",
-        c.score_amount,
-        c.ly, sm, sd,
-        c.score_last);
-
-    free(sm);
-    free(sd);
 
     return 0;
 }

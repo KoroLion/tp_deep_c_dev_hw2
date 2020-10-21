@@ -13,5 +13,6 @@ struct date {
 
 struct date get_current_date();
 int month_to_quarter(int m);
+void to_date_format(int v, char *s);
 
 #endif  // SRC_INCLUDE_UTILS_H_

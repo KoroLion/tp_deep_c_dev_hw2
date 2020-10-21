@@ -13,7 +13,6 @@ struct comment_data {
 };
 
 void random_data(struct comment_data *c, int rand_years, unsigned *rseed);
-void to_date_format(int v, char *s);
 int random_data_string(char *s, int s_len, unsigned *rseed);
 int create_random_data_file(const char *fpath, int64_t amnt, unsigned *rseed);
 int count_last_good_comments_from_file(char *fpath);
