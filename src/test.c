@@ -9,10 +9,9 @@ Copyright 2020 KoroLion (github.com/KoroLion)
 
 #include <check.h>
 
-#include "include/utils.h"
+#include "include/date_utils.h"
 
 START_TEST(utils_test) {
-    printf("%d\n", month_to_quarter(0));
     fail_unless(month_to_quarter(3) == 1, "month_to_quarter_test");
     fail_unless(month_to_quarter(4) == 2, "month_to_quarter_test");
     fail_unless(month_to_quarter(8) == 3, "month_to_quarter_test");

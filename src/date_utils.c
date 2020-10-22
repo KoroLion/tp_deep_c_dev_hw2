@@ -4,7 +4,7 @@ Copyright 2020 KoroLion (github.com/KoroLion)
 
 #include <time.h>
 
-#include "include/utils.h"
+#include "include/date_utils.h"
 
 struct date get_current_date() {
     time_t t = time(NULL);
