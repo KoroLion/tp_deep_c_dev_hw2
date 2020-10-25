@@ -28,26 +28,16 @@ int random_data_string(char *s, int s_len, unsigned *rseed) {
     if (c.score_average <= 1.0000) {
         snprintf(s, s_len, "0 0 00-00-0000 0");
     } else {
-        char *sm = malloc(3 * sizeof(sm));
-        if (sm == NULL) {
-            return -2;
-        }
-        char *sd = malloc(3 * sizeof(sd));
-        if (sd == NULL) {
-            free(sm);
-            return -2;
-        }
-        to_date_format(c.lm, sm);
-        to_date_format(c.ld, sd);
-
-        snprintf(s, s_len, "%0.2f %d %d-%s-%s %d",
+        char buf[255];
+        struct date d;
+        d.y = c.ly; d.m = c.lm; d.d = c.ld;
+        format_date(buf, d);
+        snprintf(s, s_len,
+            "%0.2f %d %s %d",
             c.score_average,
             c.score_amount,
-            c.ly, sm, sd,
+            buf,
             c.score_last);
-
-        free(sm);
-        free(sd);
     }
 
     return 0;

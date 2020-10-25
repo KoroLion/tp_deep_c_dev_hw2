@@ -1,0 +1,35 @@
+comp_flags = -Wall -Werror -Wpedantic
+
+compile_main = gcc main.c comment_data.a -o main.out $(comp_flags)
+compile_randgen = gcc randgen.c comment_data.a date_utils.o random_data_gen.c -o randgen.out $(comp_flags)
+compile_static_lib_main = gcc -c -o comment_data.o comment_data.c $(comp_flags) && gcc -c -o date_utils.o date_utils.c $(comp_flags) && \
+ar -rc comment_data.a comment_data.o date_utils.o
+compile_static_lib_random = gcc -c -o date_utils.o date_utils.c &&
+compile_test = gcc test.c comment_data.c date_utils.c -o test.out -lcheck -lm -lpthread -lrt -lsubunit -fprofile-arcs -ftest-coverage $(comp_flags)
+UNAME_S := $(shell uname -s)
+
+target:
+	cd src && \
+	$(compile_static_lib) && \
+	$(compile_main) && \
+	$(compile_randgen)
+run:
+	cd src && \
+	./randgen.out test_data.txt 100000 && \
+	./main.out
+test:
+	cd src && \
+	python3 -m cpplint --filter=-readability/casting *.c include/*.h && \
+	cppcheck --error-exitcode=1 *.c include/*.h && \
+	$(compile_main) && \
+	$(compile_randgen)
+# valgrind does not work under macOS
+# check needs futher setup
+ifneq ($(UNAME_S),Darwin)
+	cd src && \
+	$(compile_test) && \
+	./test.out && \
+	valgrind --leak-check=yes --error-exitcode=1 ./randgen.out test_data.txt 10000 && \
+	valgrind --leak-check=yes --error-exitcode=1 ./main.out && \
+	gcov utils.c comment_data.c
+endif

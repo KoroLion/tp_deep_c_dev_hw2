@@ -6,6 +6,21 @@ Copyright 2020 KoroLion (github.com/KoroLion)
 
 #include "include/date_utils.h"
 
+int to_string(int v, char *s) {
+    int len = 0;
+    int a[32];
+    while (v > 0) {
+        a[len++] = v % 10;
+        v /= 10;
+    }
+    for (int i = len - 1; i >= 0; i--) {
+        s[len - i - 1] = a[i] + 48;
+    }
+    s[len] = 0;
+
+    return --len;
+}
+
 struct date get_current_date() {
     time_t t = time(NULL);
     struct tm buf;
@@ -32,6 +47,20 @@ int month_to_quarter(int m) {
     } else {
         return -1;
     }
+}
+
+void format_date(char *s, const struct date d) {
+    char buf[3];
+    int len = to_string(d.y, s);
+    s[len + 1] = '-';
+    to_date_format(d.m, buf);
+    s[len + 2] = buf[0];
+    s[len + 3] = buf[1];
+    s[len + 4] = '-';
+    to_date_format(d.d, buf);
+    s[len + 5] = buf[0];
+    s[len + 6] = buf[1];
+    s[len + 7] = 0;
 }
 
 void to_date_format(int v, char *s) {
