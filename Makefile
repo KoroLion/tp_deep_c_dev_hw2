@@ -10,14 +10,14 @@ all: main.out randgen.out
 
 %.o: %.c
 	$(CC) $(CFLAGS) $< -c -o $(SRC_DIR)/$@
-comment_data.a: comment_data.o date_utils.o
-	cd $(SRC_DIR) && ar -rc comment_data.a comment_data.o date_utils.o
-random_data_gen.a: random_data_gen.o date_utils.o
-	cd $(SRC_DIR) && ar -rc random_data_gen.a random_data_gen.o date_utils.o
-randgen.out: random_data_gen.a
-	cd $(SRC_DIR) && $(CC) -o randgen.out randgen.c random_data_gen.a $(CFLAGS)
-main.out: comment_data.a
-	cd $(SRC_DIR) && $(CC) -o main.out main.c comment_data.a $(CFLAGS)
+libcomment_data.a: comment_data.o date_utils.o
+	cd $(SRC_DIR) && ar -rc libcomment_data.a comment_data.o date_utils.o
+librandom_data_gen.a: random_data_gen.o date_utils.o
+	cd $(SRC_DIR) && ar -rc librandom_data_gen.a random_data_gen.o date_utils.o
+randgen.out: librandom_data_gen.a
+	cd $(SRC_DIR) && $(CC) -o randgen.out randgen.c -L'.' -l'random_data_gen' $(CFLAGS)
+main.out: libcomment_data.a
+	cd $(SRC_DIR) && $(CC) -o main.out main.c -L'.' -l'comment_data' $(CFLAGS)
 
 run: main.out randgen.out
 	cd $(SRC_DIR) && ./randgen.out test_data.txt 10000
