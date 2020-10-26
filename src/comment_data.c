@@ -34,7 +34,7 @@ bool is_comment_in_last_q(const struct comment_data c) {
     return last_q == upd_q && q_y == c.ly;
 }
 
-int count_last_good_comments_from_file(const char *fpath, float avg_score) {
+int count_last_good_comments_from_file(int *flt, const char *fpath, float avg_score) {
     FILE *f = fopen(fpath, "r");
     if (f == NULL) {
         return -1;
@@ -51,7 +51,6 @@ int count_last_good_comments_from_file(const char *fpath, float avg_score) {
     struct comment_data *c = malloc(sizeof(*c));
     while (fgets(buf, buf_len, f) != NULL) {
         if (parse_comment(c, buf) == false) {
-            printf("Error: while reading %s\n", fpath);
             free(c);
             free(buf);
             fclose(f);

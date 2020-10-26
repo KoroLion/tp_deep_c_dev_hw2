@@ -23,13 +23,14 @@ run: main.out randgen.out
 	cd $(SRC_DIR) && ./randgen.out test_data.txt 10000
 	cd $(SRC_DIR) && ./main.out
 test.out: test.c
+ifneq ($(UNAME_S),Darwin)
 	cd $(SRC_DIR) && gcc test.c comment_data.c date_utils.c -o test.out -lcheck -lm -lpthread -lrt -lsubunit -fprofile-arcs -ftest-coverage $(CFLAGS)
+endif
 test: test.out main.out randgen.out
 	python3 -m cpplint --filter=-readability/casting $(SRC_DIR)/*.c $(SRC_DIR)/include/*.h
 	cppcheck --error-exitcode=1 $(SRC_DIR)/*.c $(SRC_DIR)/include/*.h
 	cd $(SRC_DIR) && ./test.out
-# valgrind does not work under macOS
-# check needs futher setup
+# valgrind and tests do not work under macOS
 ifneq ($(UNAME_S),Darwin)
 	cd $(SRC_DIR) && valgrind --leak-check=yes --error-exitcode=1 ./randgen.out test_data.txt 10000
 	cd $(SRC_DIR) && valgrind --leak-check=yes --error-exitcode=1 ./main.out

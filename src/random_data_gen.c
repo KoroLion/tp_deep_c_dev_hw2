@@ -48,6 +48,7 @@ int create_random_data_file(const char *fpath, int64_t amnt, unsigned *rseed) {
     if (f == NULL) {
         return -1;
     }
+    fprintf(f, "%" PRId64 "\n", amnt);
 
     int s_len = 255;
     char *s = malloc(s_len * sizeof(s));

@@ -13,17 +13,18 @@ Copyright 2020 KoroLion (github.com/KoroLion)
 
 int main(int argc, char **argv) {
     int clock_start = clock();
-    int flt_amount = count_last_good_comments_from_file("test_data.txt", 4);
-    if (flt_amount < 0) {
-        printf("Error: while reading data file!");
+    int flt = 0;
+    int amount = count_last_good_comments_from_file(&flt, "test_data.txt", 4);
+    if (amount < 0) {
+        printf("Error: while reading data file!\n");
         return 1;
     }
 
     int clock_spent = clock() - clock_start;
     float time_s_spent = (float)clock_spent / CLOCKS_PER_SEC;
 
-    printf("There're %d comments from the last quarter with score > 4.\n",
-        flt_amount);
+    printf("There're %d/%d comments from the last quarter with score > 4.\n",
+        flt, amount);
     printf("Clock spent: %f s.\n", time_s_spent);
 
     return 0;
