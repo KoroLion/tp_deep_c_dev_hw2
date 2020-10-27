@@ -24,7 +24,7 @@ int main(int argc, char **argv) {
 
     printf("There're %d comments from the last quarter with score > 4.\n",
         flt_amount);
-    printf("Clock spent: %f s.\n", time_s_spent);
+    printf("Time spent: %f s.\n", time_s_spent);
 
     return 0;
 }
