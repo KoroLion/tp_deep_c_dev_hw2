@@ -123,24 +123,24 @@ void *thread_count_comments(void *arg) {
     pthread_exit((void*)(uintptr_t)flt_amnt);
 }
 
-int count_actual_commnents_parallel(const char *fpath, int avg_score) {
+int count_actual_comments_parallel(const char *fpath, int avg_score) {
     int ln_amount = count_lines(fpath),
-        nproc = get_nprocs(),
-        ln_per_thread = ln_amount / nproc,
-        ln_remains = ln_amount % nproc,
+        nthreads = get_nprocs(),
+        ln_per_thread = ln_amount / nthreads,
+        ln_remains = ln_amount % nthreads,
         flt_amount = 0;
 
     int errflag;
-    pthread_t *threads = malloc(nproc * sizeof(*threads));
-    struct args *a[nproc];
+    pthread_t *threads = malloc(nthreads * sizeof(*threads));
+    struct args *a[nthreads];
 
-    for (int i = 0; i < nproc; i++) {
+    for (int i = 0; i < nthreads; i++) {
         a[i] = malloc(sizeof(*a[i]));
         a[i]->fpath = fpath;
         a[i]->avg_score = avg_score;
         a[i]->ln_offset = ln_per_thread * i;
         a[i]->ln_amount = ln_per_thread;
-        if (i + 1 == nproc) {
+        if (i + 1 == nthreads) {
             a[i]->ln_amount += ln_remains;
         }
 
@@ -152,13 +152,14 @@ int count_actual_commnents_parallel(const char *fpath, int avg_score) {
         }
     }
 
-    for (int i = 0; i < nproc; i++) {
+    for (int i = 0; i < nthreads; i++) {
         void *res = NULL;
         if (pthread_join(threads[i], &res)) {
             free(threads);
             return -4;
         }
-        flt_amount += (int)res;
+        flt_amount += (uintptr_t)res;
+        free(a[i]);
     }
     free(threads);
 

@@ -14,13 +14,14 @@ libcomment_data.a: comment_data.o date_utils.o
 	cd $(SRC_DIR) && ar -rc libcomment_data.a comment_data.o date_utils.o
 librandom_data_gen.a: random_data_gen.o date_utils.o
 	cd $(SRC_DIR) && ar -rc librandom_data_gen.a random_data_gen.o date_utils.o
-randgen.out: librandom_data_gen.a
+randgen.out: randgen.c librandom_data_gen.a
 	cd $(SRC_DIR) && $(CC) -o randgen.out randgen.c -L'.' -l'random_data_gen' $(CFLAGS)
-main.out: libcomment_data.a
-	cd $(SRC_DIR) && $(CC) -o main.out main.c -L'.' -l'comment_data' $(CFLAGS)
+main.out: main.c libcomment_data.a
+	cd $(SRC_DIR) && $(CC) -o main.out main.c -L'.' -l'comment_data' -lpthread $(CFLAGS)
 
-run: main.out randgen.out
-	cd $(SRC_DIR) && ./randgen.out test_data.txt 10000
+generate: randgen.out
+	cd $(SRC_DIR) && ./randgen.out test_data.txt 10000000
+run: main.out
 	cd $(SRC_DIR) && ./main.out
 test.out: test.c
 ifneq ($(UNAME_S),Darwin)
