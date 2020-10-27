@@ -13,7 +13,7 @@ Copyright 2020 KoroLion (github.com/KoroLion)
 
 int main(int argc, char **argv) {
     int clock_start = clock();
-    int flt_amount = count_last_good_comments_from_file("test_data.txt", 4);
+    int flt_amount = count_actual_comments("test_data.txt", 4);
     if (flt_amount < 0) {
         printf("Error: while reading data file!");
         return 1;

@@ -91,10 +91,10 @@ START_TEST(comment_data_test) {
         "9 2.56 9022 %s 1\n9 4.52 9022 %s 1\n9 4.52 9022 %s 1\n",
         last_q_sd, last_q_sd, cur_q_sd);
     create_file(fname, data);
-    fail_unless(count_last_good_comments_from_file(fname, 4) == 1, "count");
+    fail_unless(count_actual_comments(fname, 4) == 1, "count");
     snprintf(data, 255 * sizeof(*data), "bad_data");
     create_file(fname, data);
-    fail_unless(count_last_good_comments_from_file(fname, 4) == -3, "count");
+    fail_unless(count_actual_comments(fname, 4) == -3, "count");
     unlink(fname);
 } END_TEST
 
