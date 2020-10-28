@@ -72,7 +72,6 @@ START_TEST(comment_data_test) {
         c->ld.m = 12;
     }
     fail_unless(is_comment_in_last_q(*c) == true, "is_last_q");
-    // struct
 
     struct date d_last_q, d_cur_q = get_current_date();
     int last_q_m = d_cur_q.m - 3,
@@ -92,7 +91,9 @@ START_TEST(comment_data_test) {
     char data[TEST_BUF_SIZE];
 
     snprintf(data, TEST_BUF_SIZE * sizeof(*data),
-        "9 2.56 9022 %s 1\n9 4.52 9022 %s 1\n9 4.52 9022 %s 1\n",
+        "9 2.56 9022 %s 1\n"  // -
+        "9 4.52 9022 %s 1\n"  // +
+        "9 4.52 9022 %s 1\n",  // -
         last_q_sd, last_q_sd, cur_q_sd);
     create_file(fname, data);
     fail_unless(count_actual_comments(fname, 4) == 1, "count");

@@ -32,17 +32,17 @@ main_sequential.out: main.c libcomment_data.a
 generate: randgen.out
 	cd $(SRC_DIR) && ./randgen.out test_data.txt 10000000
 run_seq: main_sequential.out
-	cd $(SRC_DIR) && ./main_sequential.out
+	cd $(SRC_DIR) && ./main_sequential.out test_data.txt
 run_par: main_parallel.out
-	cd $(SRC_DIR) && LD_LIBRARY_PATH=. ./main_parallel.out
+	cd $(SRC_DIR) && LD_LIBRARY_PATH=. ./main_parallel.out test_data.txt
 
 test_sequential.out: test.c
 ifneq ($(UNAME_S),Darwin)
-	cd $(SRC_DIR) && gcc test.c comment_data.c comment_data_parallel.c date_utils.c -o test_sequential.out -lcheck -lm -lpthread -lrt -lsubunit -fprofile-arcs -ftest-coverage $(CFLAGS)
+	cd $(SRC_DIR) && gcc test.c comment_data.c comment_data_sequential.c date_utils.c -o test_sequential.out -lcheck -lm -lpthread -lrt -lsubunit -fprofile-arcs -ftest-coverage $(CFLAGS)
 endif
-test_parallel.out: test.c
+test_parallel.out: comment_data_parallel.c comment_data.c date_utils.c test.c
 ifneq ($(UNAME_S),Darwin)
-	cd $(SRC_DIR) && gcc test.c comment_data.c comment_data_sequential.c date_utils.c -o test_parallel.out -lcheck -lm -lpthread -lrt -lsubunit -fprofile-arcs -ftest-coverage $(CFLAGS)
+	cd $(SRC_DIR) && gcc test.c comment_data.c comment_data_parallel.c date_utils.c -o test_parallel.out -lcheck -lm -lpthread -lrt -lsubunit -fprofile-arcs -ftest-coverage $(CFLAGS)
 endif
 stress_test: randgen.out main_parallel.out main_sequential.out
 	@echo '----- Stress test 1 (light) -----'
@@ -56,7 +56,7 @@ stress_test: randgen.out main_parallel.out main_sequential.out
 	cd $(SRC_DIR) && time LD_LIBRARY_PATH=. ./main_parallel.out test_data.txt
 	@echo -----
 	@echo '----- Stress test 3 (heavy) -----'
-	cd $(SRC_DIR) && ./randgen.out test_data.txt 10000000
+	cd $(SRC_DIR) && ./randgen.out test_data.txt 20000000
 	cd $(SRC_DIR) && time ./main_sequential.out test_data.txt
 	cd $(SRC_DIR) && time LD_LIBRARY_PATH=. ./main_parallel.out test_data.txt
 	@echo -----
@@ -66,8 +66,8 @@ test: test_sequential.out test_parallel.out main_sequential.out main_parallel.ou
 	cppcheck --error-exitcode=1 $(SRC_DIR)/*.c $(SRC_DIR)/include/*.h
 # valgrind and check does not work under macOS
 ifneq ($(UNAME_S),Darwin)
-	cd $(SRC_DIR) && ./test_sequential.out test_data.txt
-	cd $(SRC_DIR) && ./test_parallel.out test_data.txt
+	cd $(SRC_DIR) && ./test_sequential.out
+	cd $(SRC_DIR) && ./test_parallel.out
 	cd $(SRC_DIR) && valgrind --leak-check=yes --error-exitcode=1 ./randgen.out test_data.txt 10000
 	cd $(SRC_DIR) && valgrind --leak-check=yes --error-exitcode=1 ./main_sequential.out test_data.txt
 	cd $(SRC_DIR) && valgrind --leak-check=yes --error-exitcode=1 env LD_LIBRARY_PATH=. ./main_parallel.out test_data.txt

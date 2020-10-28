@@ -19,9 +19,6 @@ struct comment_data {
 
 bool parse_comment(struct comment_data *c, char *s);
 bool is_comment_in_last_q(const struct comment_data c);
-
-int _count_actual_comments_woffset(
-    const char *fpath, float avg_score, int32_t offset, int32_t amount);
 int count_actual_comments(const char *fpath, int avg_score);
 
 #endif  // SRC_INCLUDE_COMMENT_DATA_H_
