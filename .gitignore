@@ -4,6 +4,7 @@
 *.gcda
 *.gcno
 
+*.so
 *.a
 *.txt
 *.o
