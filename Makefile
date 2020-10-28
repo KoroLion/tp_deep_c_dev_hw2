@@ -56,7 +56,8 @@ ifneq ($(UNAME_S),Darwin)
 	cd $(SRC_DIR) && gcov date_utils.c comment_data.c comment_data_sequential.c comment_data_parallel.c
 else
 	cd $(SRC_DIR) && ./randgen.out test_data.txt 100000
-	cd $(SRC_DIR) && ./main.out
+	cd $(SRC_DIR) && ./main_sequential.out
+	cd $(SRC_DIR) && ./main_parallel.out
 endif
 clean:
 	cd $(SRC_DIR) && rm -f *.o *.gcno *.gcda *.out *.gcov *.exe *.a *.so

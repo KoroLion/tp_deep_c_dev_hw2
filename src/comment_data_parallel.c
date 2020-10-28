@@ -51,7 +51,7 @@ void *thread_count_comments(void *arg) {
 
 int count_actual_comments(const char *fpath, int avg_score) {
     int nthreads = get_nprocs();
-    int16_t ln_amount = count_lines(fpath),
+    int32_t ln_amount = count_lines(fpath),
         ln_per_thread = ln_amount / nthreads,
         ln_remains = ln_amount % nthreads,
         flt_amount = 0;
