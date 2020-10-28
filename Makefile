@@ -46,21 +46,20 @@ ifneq ($(UNAME_S),Darwin)
 endif
 stress_test: randgen.out main_parallel.out main_sequential.out
 	@echo '----- Stress test 1 (light) -----'
-	cd $(SRC_DIR) && ./randgen.out test_data.txt 100000
-	cd $(SRC_DIR) && time ./main_sequential.out test_data.txt
-	cd $(SRC_DIR) && time LD_LIBRARY_PATH=. ./main_parallel.out test_data.txt
+	cd $(SRC_DIR) && ./randgen.out test_data_100000.txt 100000
+	cd $(SRC_DIR) && time ./main_sequential.out test_data_100000.txt
+	cd $(SRC_DIR) && time LD_LIBRARY_PATH=. ./main_parallel.out test_data_100000.txt
 	@echo -----
 	@echo '----- Stress test 2 (med) -----'
-	cd $(SRC_DIR) && ./randgen.out test_data.txt 1000000
-	cd $(SRC_DIR) && time ./main_sequential.out test_data.txt
-	cd $(SRC_DIR) && time LD_LIBRARY_PATH=. ./main_parallel.out test_data.txt
+	@-cd $(SRC_DIR) && test ! -f test_data_1000000.txt && ./randgen.out test_data_1000000.txt 1000000
+	cd $(SRC_DIR) && time ./main_sequential.out test_data_1000000.txt
+	cd $(SRC_DIR) && time LD_LIBRARY_PATH=. ./main_parallel.out test_data_1000000.txt
 	@echo -----
 	@echo '----- Stress test 3 (heavy) -----'
-	cd $(SRC_DIR) && ./randgen.out test_data.txt 20000000
-	cd $(SRC_DIR) && time ./main_sequential.out test_data.txt
-	cd $(SRC_DIR) && time LD_LIBRARY_PATH=. ./main_parallel.out test_data.txt
+	@-cd $(SRC_DIR) && test ! -f test_data_20000000.txt && ./randgen.out test_data_20000000.txt 20000000
+	cd $(SRC_DIR) && time ./main_sequential.out test_data_20000000.txt
+	cd $(SRC_DIR) && time LD_LIBRARY_PATH=. ./main_parallel.out test_data_20000000.txt
 	@echo -----
-	cd $(SRC_DIR) && rm test_data.txt
 test: test_sequential.out test_parallel.out main_sequential.out main_parallel.out randgen.out
 	python3 -m cpplint --filter=-readability/casting $(SRC_DIR)/*.c $(SRC_DIR)/include/*.h
 	cppcheck --error-exitcode=1 $(SRC_DIR)/*.c $(SRC_DIR)/include/*.h
@@ -78,4 +77,4 @@ else
 	cd $(SRC_DIR) && ./main_parallel.out
 endif
 clean:
-	cd $(SRC_DIR) && rm -f *.o *.gcno *.gcda *.out *.gcov *.exe *.a *.so
+	cd $(SRC_DIR) && rm -f *.o *.gcno *.gcda *.out *.gcov *.exe *.a *.so *.txt

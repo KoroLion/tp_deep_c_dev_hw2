@@ -102,6 +102,13 @@ START_TEST(comment_data_test) {
     create_file(fname, data);
     fail_unless(count_actual_comments(fname, 4) == -3, "count");
 
+    snprintf(data, TEST_BUF_SIZE * sizeof(*data),
+        "2 4.52 902212341234234213421342134123412331231412341212342123 %s 1\n",
+        last_q_sd);
+    create_file(fname, data);
+    int res = count_actual_comments(fname, 4);
+    fail_unless(res == -3 || res == 1, "count");
+
     snprintf(data, TEST_BUF_SIZE,
         "1 2.56 9022 %s 1\n"  // -
         "2 4.52 9022 %s 1\n"  // +

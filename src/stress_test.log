@@ -1,0 +1,48 @@
+----- Stress test 1 (light) -----
+cd src && ./randgen.out test_data_100000.txt 100000
+Created 100000 comments entries in test_data_100000.txt.
+cd src && time ./main_sequential.out test_data_100000.txt
+1668 comments are good and actual.
+
+real    0m0.143s
+user    0m0.078s
+sys     0m0.063s
+cd src && time LD_LIBRARY_PATH=. ./main_parallel.out test_data_100000.txt
+1668 comments are good and actual.
+
+real    0m0.107s
+user    0m0.297s
+sys     0m0.156s
+-----
+----- Stress test 2 (med) -----
+Makefile:48: recipe for target 'stress_test' failed
+make: [stress_test] Error 1 (ignored)
+cd src && time ./main_sequential.out test_data_1000000.txt
+16682 comments are good and actual.
+
+real    0m1.335s
+user    0m0.984s
+sys     0m0.344s
+cd src && time LD_LIBRARY_PATH=. ./main_parallel.out test_data_1000000.txt
+16682 comments are good and actual.
+
+real    0m0.885s
+user    0m1.922s
+sys     0m1.859s
+-----
+----- Stress test 3 (heavy) -----
+Makefile:48: recipe for target 'stress_test' failed
+make: [stress_test] Error 1 (ignored)
+cd src && time ./main_sequential.out test_data_20000000.txt
+332369 comments are good and actual.
+
+real    0m26.719s
+user    0m21.031s
+sys     0m5.594s
+cd src && time LD_LIBRARY_PATH=. ./main_parallel.out test_data_20000000.txt
+332369 comments are good and actual.
+
+real    0m18.401s
+user    0m44.219s
+sys     0m34.563s
+-----
