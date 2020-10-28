@@ -51,12 +51,12 @@ stress_test: randgen.out main_parallel.out main_sequential.out
 	cd $(SRC_DIR) && time LD_LIBRARY_PATH=. ./main_parallel.out test_data_100000.txt
 	@echo -----
 	@echo '----- Stress test 2 (med) -----'
-	@-cd $(SRC_DIR) && test ! -f test_data_1000000.txt && ./randgen.out test_data_1000000.txt 1000000
+	-@cd $(SRC_DIR) && test ! -f test_data_1000000.txt && ./randgen.out test_data_1000000.txt 1000000
 	cd $(SRC_DIR) && time ./main_sequential.out test_data_1000000.txt
 	cd $(SRC_DIR) && time LD_LIBRARY_PATH=. ./main_parallel.out test_data_1000000.txt
 	@echo -----
 	@echo '----- Stress test 3 (heavy) -----'
-	@-cd $(SRC_DIR) && test ! -f test_data_20000000.txt && ./randgen.out test_data_20000000.txt 20000000
+	-@cd $(SRC_DIR) && test ! -f test_data_20000000.txt && ./randgen.out test_data_20000000.txt 20000000
 	cd $(SRC_DIR) && time ./main_sequential.out test_data_20000000.txt
 	cd $(SRC_DIR) && time LD_LIBRARY_PATH=. ./main_parallel.out test_data_20000000.txt
 	@echo -----

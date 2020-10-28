@@ -32,7 +32,6 @@ void free_arr(void **ptr, int length) {
             free(ptr[i]);
         }
     }
-    free(ptr);
 }
 
 int read_file(char ***p_str_arr, const char *fpath) {
@@ -51,6 +50,7 @@ int read_file(char ***p_str_arr, const char *fpath) {
             char **new_ptr = realloc(c_data, current_size * sizeof(*c_data));
             if (new_ptr == NULL) {
                 free_arr((void**)c_data, ln_amount);
+                free(c_data);
                 return -2;
             }
             c_data = new_ptr;
@@ -58,6 +58,7 @@ int read_file(char ***p_str_arr, const char *fpath) {
         c_data[ln_amount] = malloc(s_len * sizeof(**c_data));
         if (c_data[ln_amount] == NULL) {
             free_arr((void**)c_data, ln_amount);
+            free(c_data);
             return -2;
         }
         res = fgets(c_data[ln_amount], s_len, fp);
@@ -78,10 +79,13 @@ void *thread_count_comments(void *arg) {
     int flt_amount = 0;
     int i = a->ln_offset;
     struct comment_data *c = malloc(sizeof(*c));
+    if (c == NULL) {
+        pthread_exit((void*)(uintptr_t)-2);
+    }
     while (i < a->ln_offset + a->ln_amount) {
         if (!parse_comment(c, a->c_data[i])) {
             free(c);
-            return (void*)(uintptr_t)-3;
+            pthread_exit((void*)(uintptr_t)-3);
         }
 
         if (is_comment_in_last_q(*c) && c->score_average > a->avg_score) {
@@ -127,6 +131,7 @@ int count_actual_comments(const char *fpath, int avg_score) {
         if (errflag != 0) {
             free(threads);
             free_arr((void**)c_data, ln_amount);
+            free(c_data);
             free_arr((void**)a, nthreads);
             return -4;
         }
@@ -134,13 +139,16 @@ int count_actual_comments(const char *fpath, int avg_score) {
 
     for (int i = 0; i < nthreads; i++) {
         void *res = NULL;
-        if (pthread_join(threads[i], &res)) {
+        int ret = pthread_join(threads[i], &res);
+        int32_t ln_amnt = (uintptr_t)res;
+        if (ret || ln_amnt < 0) {
             free(threads);
-            free_arr((void**)c_data, ln_amount);
-            free_arr((void**)a, nthreads);
+            free_arr((void*)c_data, ln_amount);
+            free(c_data);
+            free_arr((void*)a, nthreads);
             return -3;
         }
-        flt_amount += (uintptr_t)res;
+        flt_amount += ln_amnt;
         free(a[i]);
         a[i] = NULL;
     }

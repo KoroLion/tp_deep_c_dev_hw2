@@ -1,6 +1,6 @@
 language: c
 install: pip3 install cpplint
-script: make test
+script: make test && make stress_test
 cache: packages
 
 addons:
