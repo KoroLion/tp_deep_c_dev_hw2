@@ -14,6 +14,8 @@ Copyright 2020 KoroLion (github.com/KoroLion)
 #include "include/date_utils.h"
 #include "include/comment_data.h"
 
+const int TEST_BUF_SIZE = 1024;
+
 bool create_file(const char *fname, char *data) {
     FILE *pf = fopen(fname, "wr");
     if (pf == NULL) {
@@ -56,17 +58,18 @@ START_TEST(comment_data_test) {
     fail_unless(c->id == 9, "parse_comment");
     fail_unless(abs(c->score_average - 2.56) < 0.01, "parse_comment");
     fail_unless(c->score_amount == 9022, "parse_comment");
-    fail_unless(c->ly == 2020 && c->lm == 6 && c->ld == 21, "parse_comment");
+    fail_unless(c->ld.y == 2020 && c->ld.m == 6 && c->ld.d == 21,
+        "parse_comment");
     fail_unless(c->score_last == 1, "parse_comment");
     fail_unless(parse_comment(c, bad_comment_s) == false, "parse_comment");
 
     struct date d = get_current_date();
-    c->ly = d.y;
-    c->lm = d.m;
+    c->ld.y = d.y;
+    c->ld.m = d.m;
     fail_unless(is_comment_in_last_q(*c) == false, "is_last_q");
-    c->lm -= 3;
-    if (c->lm <= 0) {
-        c->lm = 12;
+    c->ld.m -= 3;
+    if (c->ld.m <= 0) {
+        c->ld.m = 12;
     }
     fail_unless(is_comment_in_last_q(*c) == true, "is_last_q");
     // struct
@@ -86,15 +89,30 @@ START_TEST(comment_data_test) {
     format_date(cur_q_sd, d_cur_q);
 
     const char *fname = "temp_file.txt";
-    char data[255];
-    snprintf(data, 255 * sizeof(*data),
+    char data[TEST_BUF_SIZE];
+
+    snprintf(data, TEST_BUF_SIZE * sizeof(*data),
         "9 2.56 9022 %s 1\n9 4.52 9022 %s 1\n9 4.52 9022 %s 1\n",
         last_q_sd, last_q_sd, cur_q_sd);
     create_file(fname, data);
     fail_unless(count_actual_comments(fname, 4) == 1, "count");
-    snprintf(data, 255 * sizeof(*data), "bad_data");
+
+    snprintf(data, TEST_BUF_SIZE * sizeof(*data), "bad_data");
     create_file(fname, data);
     fail_unless(count_actual_comments(fname, 4) == -3, "count");
+
+    snprintf(data, TEST_BUF_SIZE,
+        "1 2.56 9022 %s 1\n"  // -
+        "2 4.52 9022 %s 1\n"  // +
+        "3 4.52 9022 %s 1\n"  // -
+        "4 5 41234 2002-02-01 5\n"  // -
+        "5 4.31 1233 %s 4\n"  // +
+        "6 4.01 321 %s 2\n"   // +
+        "7 3.99 321 %s 5\n",   // -
+        last_q_sd, last_q_sd, cur_q_sd, last_q_sd, last_q_sd, last_q_sd);
+    create_file(fname, data);
+    fail_unless(count_actual_comments(fname, 4) == 3, "count");
+
     unlink(fname);
 } END_TEST
 

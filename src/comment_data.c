@@ -21,14 +21,14 @@ bool parse_comment(struct comment_data *c, char *s) {
     int var_amount = sscanf(s, "%d %f %d %d-%d-%d %d\n",
         &c->id, &c->score_average,
         &c->score_amount,
-        &c->ly, &c->lm, &c->ld,
+        &c->ld.y, &c->ld.m, &c->ld.d,
         &c->score_last);
 
     return var_amount == 7;
 }
 
 bool is_comment_in_last_q(const struct comment_data c) {
-    int upd_q = month_to_quarter(c.lm);
+    int upd_q = month_to_quarter(c.ld.m);
     struct date cur_date = get_current_date();
     int last_q = month_to_quarter(cur_date.m) - 1;
     int q_y = cur_date.y;
@@ -37,7 +37,7 @@ bool is_comment_in_last_q(const struct comment_data c) {
         q_y--;
     }
 
-    return last_q == upd_q && q_y == c.ly;
+    return last_q == upd_q && q_y == c.ld.y;
 }
 
 int _count_actual_comments_woffset(
@@ -67,7 +67,6 @@ int _count_actual_comments_woffset(
     while (fgets(buf, buf_len, f) != NULL
             && (checked_amount < amount || amount == 0)) {
         if (parse_comment(c, buf) == false) {
-            printf("Error: while reading %s\n", fpath);
             free(c);
             free(buf);
             fclose(f);

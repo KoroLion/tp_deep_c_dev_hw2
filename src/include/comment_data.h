@@ -7,11 +7,13 @@ Copyright 2020 KoroLion (github.com/KoroLion)
 #include <stdbool.h>
 #include <inttypes.h>
 
+#include "date_utils.h"  // NOLINT
+
 struct comment_data {
     int id;
     float score_average;
     int score_amount;
-    int ly, lm, ld;
+    struct date ld;
     int score_last;
 };
 

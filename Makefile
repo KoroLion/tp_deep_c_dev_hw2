@@ -1,4 +1,5 @@
 VPATH:=src
+SHELL:=/bin/bash
 
 CC:=gcc
 CFLAGS:=-Wall -Werror -Wpedantic
@@ -43,16 +44,33 @@ test_parallel.out: test.c
 ifneq ($(UNAME_S),Darwin)
 	cd $(SRC_DIR) && gcc test.c comment_data.c comment_data_sequential.c date_utils.c -o test_parallel.out -lcheck -lm -lpthread -lrt -lsubunit -fprofile-arcs -ftest-coverage $(CFLAGS)
 endif
+stress_test: randgen.out main_parallel.out main_sequential.out
+	@echo '----- Stress test 1 (light) -----'
+	cd $(SRC_DIR) && ./randgen.out test_data.txt 100000
+	cd $(SRC_DIR) && time ./main_sequential.out test_data.txt
+	cd $(SRC_DIR) && time LD_LIBRARY_PATH=. ./main_parallel.out test_data.txt
+	@echo -----
+	@echo '----- Stress test 2 (med) -----'
+	cd $(SRC_DIR) && ./randgen.out test_data.txt 1000000
+	cd $(SRC_DIR) && time ./main_sequential.out test_data.txt
+	cd $(SRC_DIR) && time LD_LIBRARY_PATH=. ./main_parallel.out test_data.txt
+	@echo -----
+	@echo '----- Stress test 3 (heavy) -----'
+	cd $(SRC_DIR) && ./randgen.out test_data.txt 10000000
+	cd $(SRC_DIR) && time ./main_sequential.out test_data.txt
+	cd $(SRC_DIR) && time LD_LIBRARY_PATH=. ./main_parallel.out test_data.txt
+	@echo -----
+	cd $(SRC_DIR) && rm test_data.txt
 test: test_sequential.out test_parallel.out main_sequential.out main_parallel.out randgen.out
 	python3 -m cpplint --filter=-readability/casting $(SRC_DIR)/*.c $(SRC_DIR)/include/*.h
 	cppcheck --error-exitcode=1 $(SRC_DIR)/*.c $(SRC_DIR)/include/*.h
 # valgrind and check does not work under macOS
 ifneq ($(UNAME_S),Darwin)
-	cd $(SRC_DIR) && ./test_sequential.out
-	cd $(SRC_DIR) && ./test_parallel.out
+	cd $(SRC_DIR) && ./test_sequential.out test_data.txt
+	cd $(SRC_DIR) && ./test_parallel.out test_data.txt
 	cd $(SRC_DIR) && valgrind --leak-check=yes --error-exitcode=1 ./randgen.out test_data.txt 10000
-	cd $(SRC_DIR) && valgrind --leak-check=yes --error-exitcode=1 ./main_sequential.out
-	cd $(SRC_DIR) && valgrind --leak-check=yes --error-exitcode=1 env LD_LIBRARY_PATH=. ./main_parallel.out
+	cd $(SRC_DIR) && valgrind --leak-check=yes --error-exitcode=1 ./main_sequential.out test_data.txt
+	cd $(SRC_DIR) && valgrind --leak-check=yes --error-exitcode=1 env LD_LIBRARY_PATH=. ./main_parallel.out test_data.txt
 	cd $(SRC_DIR) && gcov date_utils.c comment_data.c comment_data_sequential.c comment_data_parallel.c
 else
 	cd $(SRC_DIR) && ./randgen.out test_data.txt 100000

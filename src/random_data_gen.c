@@ -13,9 +13,9 @@ Copyright 2020 KoroLion (github.com/KoroLion)
 void random_data(struct comment_data *c, int rand_years, unsigned *rseed) {
     struct date cur_d = get_current_date();
 
-    c->ly = (cur_d.y - rand_years) + rand_r(rseed) % (rand_years + 1);
-    c->lm = rand_r(rseed) % 12 + 1;
-    c->ld = rand_r(rseed) % 28 + 1;
+    c->ld.y = (cur_d.y - rand_years) + rand_r(rseed) % (rand_years + 1);
+    c->ld.m = rand_r(rseed) % 12 + 1;
+    c->ld.d = rand_r(rseed) % 28 + 1;
     c->score_average = (rand_r(rseed) % 5001) / 1000.0;
     c->score_amount = rand_r(rseed) % 10000;
     c->score_last = rand_r(rseed) % 5 + 1;
@@ -29,9 +29,7 @@ int random_data_string(char *s, int s_len, unsigned *rseed) {
         snprintf(s, s_len, "0 0 00-00-0000 0");
     } else {
         char buf[255];
-        struct date d;
-        d.y = c.ly; d.m = c.lm; d.d = c.ld;
-        format_date(buf, d);
+        format_date(buf, c.ld);
         snprintf(s, s_len,
             "%0.2f %d %s %d",
             c.score_average,
