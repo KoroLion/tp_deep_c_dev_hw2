@@ -18,7 +18,7 @@ Copyright 2020 KoroLion (github.com/KoroLion)
 #include "include/comment_data.h"
 
 int count_lines(const char *fpath) {
-    FILE *fp = fopen("test_data.txt", "r");
+    FILE *fp = fopen(fpath, "r");
     char c;
     int ln_amount = 0;
     while ((c = fgetc(fp)) != EOF) {
