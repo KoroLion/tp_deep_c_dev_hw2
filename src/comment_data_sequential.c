@@ -8,36 +8,31 @@ Copyright 2020 KoroLion (github.com/KoroLion)
 #include "include/comment_data.h"
 
 int count_actual_comments(const char *fpath, int avg_score) {
-    FILE *f = fopen(fpath, "r");
-    if (f == NULL) {
-        return -1;
-    }
-
-    const int buf_len = 1024;
-    char *buf = malloc(buf_len * sizeof(buf));
-    if (buf == NULL) {
-        fclose(f);
-        return -2;
+    char **c_data;
+    int ln_amount = read_file(&c_data, fpath);
+    if (ln_amount <= 0) {
+        return -3;
     }
 
     int filtered_amount = 0;
     struct comment_data *c = malloc(sizeof(*c));
-    while (fgets(buf, buf_len, f) != NULL) {
-        if (!parse_comment(c, buf)) {
-            free(c);
-            free(buf);
-            fclose(f);
+    int i = 0;
+    while (i < ln_amount) {
+        if (!parse_comment(c, c_data[i])) {
+            free_arr((void**)c_data, ln_amount);
+            free(c_data);
             return -3;
         }
 
         if (is_comment_in_last_q(*c) && c->score_average > avg_score) {
             filtered_amount++;
         }
+        i++;
     }
 
     free(c);
-    free(buf);
-    fclose(f);
+    free_arr((void**)c_data, ln_amount);
+    free(c_data);
 
     return filtered_amount;
 }
