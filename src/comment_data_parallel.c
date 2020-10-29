@@ -14,6 +14,7 @@ Copyright 2020 KoroLion (github.com/KoroLion)
     #include <sys/sysinfo.h>
 #endif
 
+#include "include/utils.h"
 #include "include/date_utils.h"
 #include "include/comment_data.h"
 

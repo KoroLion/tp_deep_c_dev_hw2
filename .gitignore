@@ -8,5 +8,6 @@
 *.a
 *.txt
 *.o
+*.pio
 *.out
 *.exe

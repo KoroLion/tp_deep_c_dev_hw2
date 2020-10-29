@@ -6,6 +6,7 @@ Copyright 2020 KoroLion (github.com/KoroLion)
 #include <stdlib.h>
 
 #include "include/comment_data.h"
+#include "include/utils.h"
 
 int count_actual_comments(const char *fpath, int avg_score) {
     char **c_data;

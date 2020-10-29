@@ -17,9 +17,6 @@ struct comment_data {
     int score_last;
 };
 
-void free_arr(void **ptr, int length);
-int read_file(char ***p_str_arr, const char *fpath);
-
 bool parse_comment(struct comment_data *c, char *s);
 bool is_comment_in_last_q(const struct comment_data c);
 int count_actual_comments(const char *fpath, int avg_score);
