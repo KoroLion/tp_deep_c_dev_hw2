@@ -1,0 +1,48 @@
+----- Stress test 1 (light) -----
+build/bin/randgen_data.out build/bin/test_data_100000.txt 100000
+Created 100000 comments entries in build/bin/test_data_100000.txt.
+time build/bin/count_sequential.out build/bin/test_data_100000.txt
+1714 comments are good and actual.
+
+real    0m0.176s
+user    0m0.109s
+sys     0m0.047s
+time LD_LIBRARY_PATH=build/bin build/bin/count_parallel.out build/bin/test_data_100000.txt
+1714 comments are good and actual.
+
+real    0m0.090s
+user    0m0.125s
+sys     0m0.188s
+-----
+----- Stress test 2 (med) -----
+test ! -f build/bin/test_data_1000000.txt && build/bin/randgen_data.out build/bin/test_data_1000000.txt 1000000
+Created 1000000 comments entries in build/bin/test_data_1000000.txt.
+time build/bin/count_sequential.out build/bin/test_data_1000000.txt
+16611 comments are good and actual.
+
+real    0m1.475s
+user    0m0.984s
+sys     0m0.406s
+time LD_LIBRARY_PATH=build/bin build/bin/count_parallel.out build/bin/test_data_1000000.txt
+16611 comments are good and actual.
+
+real    0m0.883s
+user    0m2.031s
+sys     0m1.484s
+-----
+----- Stress test 3 (heavy) -----
+test ! -f build/bin/test_data_20000000.txt && build/bin/randgen_data.out build/bin/test_data_20000000.txt 20000000
+Created 20000000 comments entries in build/bin/test_data_20000000.txt.
+time build/bin/count_sequential.out build/bin/test_data_20000000.txt
+332156 comments are good and actual.
+
+real    0m28.227s
+user    0m21.469s
+sys     0m6.688s
+time LD_LIBRARY_PATH=build/bin build/bin/count_parallel.out build/bin/test_data_20000000.txt
+332156 comments are good and actual.
+
+real    0m18.312s
+user    0m42.734s
+sys     0m36.672s
+-----

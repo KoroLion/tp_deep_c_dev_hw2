@@ -1,0 +1,12 @@
+language: c
+install: pip3 install cpplint
+script: make test && make stress_test
+cache: packages
+
+addons:
+  apt:
+    packages:
+      - valgrind
+      - check
+      - cppcheck
+      - python3-pip
