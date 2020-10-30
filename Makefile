@@ -34,7 +34,11 @@ $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c | $(BUILD_DIR)
 $(PICOBJ_DIR)/%.o: $(SRC_DIR)/%.c | $(BUILD_DIR)
 	$(CC) $(CFLAGS) $< -fPIC -c -o $@
 $(TESTS_DIR)/%.o: $(SRC_DIR)/%.c | $(BUILD_DIR)
+ifneq ($(UNAME_S),Darwin)
 	$(CC) $(CFLAGS) $< -c -o $@ -fprofile-arcs -ftest-coverage -lgcov
+else
+	@echo --- Warning: tests are not supported under macOS
+endif
 
 # building libs
 $(BUILD_DIR)/librandom_data_gen.a: $(addprefix $(BUILD_DIR)/,date_utils.o comment_data.o random_data_gen.o)
@@ -77,7 +81,8 @@ ifneq ($(UNAME_S),Darwin)
 	gcov $(addprefix $(TESTS_DIR)/,comment_data_parallel.o utils.to date_utils.o comment_data.o) --object-directory $(TESTS_DIR)
 	rm *.gcov
 else
-	$(BIN_DIR)/randgen.out test_data.txt 100000
+	@echo --- Warning: valgrind does not work under macOS
+	$(BIN_DIR)/randgen_data.out test_data.txt 100000
 	$(BIN_DIR)/count_sequential.out test_data.txt
 	$(BIN_DIR)/count_parallel.out test_data.txt
 endif
